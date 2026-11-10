@@ -1,0 +1,29 @@
+{
+  "name": "MyMusic (Flutter 3.47.7)",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "."
+  },
+  "remoteUser": "vscode",
+  "postCreateCommand": "flutter pub get",
+  "forwardPorts": [8080],
+  "portsAttributes": {
+    "8080": {
+      "label": "Flutter web preview",
+      "onAutoForward": "openPreview"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Dart-Code.dart-code",
+        "Dart-Code.flutter"
+      ],
+      "settings": {
+        "dart.flutterSdkPath": "/opt/flutter",
+        "dart.analysisExcludedFolders": ["build"],
+        "editor.formatOnSave": true
+      }
+    }
+  }
+}

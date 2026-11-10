@@ -1,0 +1,65 @@
+name: iOS unsigned IPA
+
+on:
+  push:
+    branches: [master, main]
+  workflow_dispatch:
+
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build unsigned .ipa
+    runs-on: macos-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.7'
+          channel: stable
+          cache: true
+
+      - name: Show toolchain
+        run: |
+          flutter --version
+          xcodebuild -version
+
+      # Musly targets iOS 15; Swift Package Manager must stay off.
+      - name: Configure Flutter
+        run: flutter config --no-enable-swift-package-manager
+
+      - name: Dependencies
+        run: |
+          flutter pub get
+          cd ios && pod install
+
+      - name: Build (no codesign)
+        run: flutter build ios --release --no-codesign
+
+      - name: Package .ipa
+        run: |
+          set -euo pipefail
+          APP_DIR=$(find build/ios -type d -name "Runner.app" | head -1)
+          if [ -z "$APP_DIR" ]; then
+            echo "::error::Runner.app not found"
+            exit 1
+          fi
+          echo "Using $APP_DIR"
+          rm -rf Payload MyMusic-unsigned.ipa
+          mkdir -p Payload
+          cp -R "$APP_DIR" Payload/
+          zip -qry MyMusic-unsigned.ipa Payload
+          rm -rf Payload
+          ls -lh MyMusic-unsigned.ipa
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MyMusic-unsigned-ipa
+          path: MyMusic-unsigned.ipa
+          if-no-files-found: error
+          retention-days: 14
