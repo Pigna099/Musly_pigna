@@ -84,7 +84,7 @@ class ThemeService extends ChangeNotifier {
   static const String _keyAccentColor = 'app_accent_color';
   static const String _keyLiquidGlass = 'app_liquid_glass';
 
-  ThemeMode _themeMode = ThemeMode.system;
+  ThemeMode _themeMode = ThemeMode.dark;
   AccentColor _accentColor = AccentColor.red;
   bool _liquidGlass = false;
 
@@ -95,7 +95,7 @@ class ThemeService extends ChangeNotifier {
   Future<void> initialize() async {
     final prefs = await SharedPreferences.getInstance();
 
-    final modeKey = prefs.getString(_keyThemeMode) ?? 'system';
+    final modeKey = prefs.getString(_keyThemeMode) ?? 'dark';
     _themeMode = _themeModeFromKey(modeKey);
 
     final colorKey = prefs.getString(_keyAccentColor) ?? 'red';
@@ -131,8 +131,10 @@ class ThemeService extends ChangeNotifier {
         return ThemeMode.light;
       case 'dark':
         return ThemeMode.dark;
-      default:
+      case 'system':
         return ThemeMode.system;
+      default:
+        return ThemeMode.dark;
     }
   }
 

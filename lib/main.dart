@@ -249,42 +249,17 @@ class MuslyApp extends StatelessWidget {
 
     return DynamicColorBuilder(
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-        final ThemeData light;
-        final ThemeData dark;
-
-        if (themeService.accentColor.isDynamic) {
-          if (lightDynamic != null && darkDynamic != null) {
-            light = AppTheme.lightThemeFromScheme(lightDynamic.harmonized());
-            dark = AppTheme.darkThemeFromScheme(darkDynamic.harmonized());
-          } else {
-            final fallbackAccent = themeService.accentColor.color;
-            light = AppTheme.lightThemeWith(fallbackAccent);
-            dark = AppTheme.darkThemeWith(fallbackAccent);
-          }
-        } else {
-          final accent = themeService.accentColor.color;
-          if (lightDynamic != null && darkDynamic != null) {
-            final harmonisedLight = lightDynamic.harmonized().copyWith(
-                  primary: accent,
-                  secondary: accent.withAlpha(200),
-                );
-            final harmonisedDark = darkDynamic.harmonized().copyWith(
-                  primary: accent,
-                  secondary: accent.withAlpha(200),
-                );
-            light = AppTheme.lightThemeFromScheme(harmonisedLight);
-            dark = AppTheme.darkThemeFromScheme(harmonisedDark);
-          } else {
-            light = AppTheme.lightThemeWith(accent);
-            dark = AppTheme.darkThemeWith(accent);
-          }
-        }
+        // YouTube-Music-style themes are built from our own tokens. Dynamic
+        // colour (Android) is only used as the accent when the user picked it.
+        final accent = themeService.accentColor.isDynamic
+            ? (darkDynamic?.primary ?? YtmColors.brand)
+            : themeService.accentColor.color;
 
         return MaterialApp(
-          title: 'Musly',
+          title: 'MyMusic',
           debugShowCheckedModeBanner: false,
-          theme: light,
-          darkTheme: dark,
+          theme: YtmTheme.light(accent: accent),
+          darkTheme: YtmTheme.dark(accent: accent),
           themeMode: isTv ? ThemeMode.dark : themeService.themeMode,
           scrollBehavior: AppScrollBehavior(),
           navigatorKey: navigatorKey,
