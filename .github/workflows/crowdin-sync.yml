@@ -1,22 +1,9 @@
 name: Crowdin Translations Sync
 
+# Fork: automatic triggers disabled. This workflow needs CROWDIN_PROJECT_ID and
+# CROWDIN_PERSONAL_TOKEN, which only exist in the upstream repository. Running it
+# on the fork produced a failed run every 4 hours.
 on:
-  # 1. Immediate trigger via Crowdin Webhook (GitHub repository_dispatch event)
-  repository_dispatch:
-    types: [crowdin-sync, crowdin_update, crowdin]
-
-  # 2. Push new source strings to Crowdin whenever app_en.arb is modified on master
-  push:
-    branches:
-      - master
-    paths:
-      - 'lib/l10n/app_en.arb'
-
-  # 3. Periodic fallback sync every 4 hours
-  schedule:
-    - cron: '0 */4 * * *'
-
-  # 4. Manual trigger from GitHub Actions UI
   workflow_dispatch:
 
 jobs:
