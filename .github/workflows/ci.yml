@@ -28,7 +28,17 @@ jobs:
         run: flutter pub get
 
       - name: Analyze (errors only fail the job)
-        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+        run: |
+          set +e
+          flutter analyze --no-fatal-infos --no-fatal-warnings 2>&1 | tee analyze.log
+          status=${PIPESTATUS[0]}
+          {
+            echo "### flutter analyze (exit ${status})"
+            echo '```'
+            tail -n 250 analyze.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
 
   test:
     name: Tests
