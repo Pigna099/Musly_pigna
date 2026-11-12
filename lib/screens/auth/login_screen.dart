@@ -33,6 +33,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  static const String _defaultSubsonicUrl = 'https://pignify.ddns.net';
+
   final _formKey = GlobalKey<FormState>();
   final _serverController = TextEditingController();
   final _usernameController = TextEditingController();
@@ -65,6 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
 
+    _serverController.text = _defaultSubsonicUrl;
     _serverController.addListener(_clearError);
     _usernameController.addListener(_clearError);
     _passwordController.addListener(_clearError);
@@ -105,6 +108,10 @@ class _LoginScreenState extends State<LoginScreen> {
     if (family != null && family.isNotEmpty && mounted) {
       setState(() {
         _serverFamily = family;
+        if (family != 'subsonic' &&
+            _serverController.text.trim() == _defaultSubsonicUrl) {
+          _serverController.clear();
+        }
       });
     }
   }
@@ -634,6 +641,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           setState(() {
                             _serverFamily = v;
                             _useLegacyAuth = false;
+                            if (v == 'subsonic' &&
+                                _serverController.text.trim().isEmpty) {
+                              _serverController.text = _defaultSubsonicUrl;
+                            } else if (v != 'subsonic' &&
+                                _serverController.text.trim() ==
+                                    _defaultSubsonicUrl) {
+                              _serverController.clear();
+                            }
                           });
                           StorageService().saveLastSelectedFamily(v);
                         },
