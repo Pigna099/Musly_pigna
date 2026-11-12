@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:musly/providers/providers.dart';
 import 'package:musly/services/subsonic_service.dart';
 import 'package:musly/theme/app_theme.dart';
+import 'package:musly/theme/ytm_tokens.dart';
 import 'package:musly/widgets/common/album_artwork.dart';
 import 'package:musly/utils/navigation_helper.dart';
 import 'package:musly/screens/detail/album_screen.dart';
@@ -20,6 +21,7 @@ import 'package:musly/screens/auth/add_server_screen.dart';
 import 'package:musly/l10n/app_localizations.dart';
 import 'package:musly/services/offline_service.dart';
 import 'package:musly/widgets/common/playlist_artwork.dart';
+import 'package:musly/widgets/common/ytm_filter_chip.dart';
 import 'package:musly/screens/settings/settings_screen.dart';
 import 'package:musly/widgets/dialogs/import_playlist_dialog.dart';
 import 'package:musly/widgets/modals/playlist_options_modal.dart';
@@ -494,17 +496,17 @@ class _LibraryScreenState extends State<LibraryScreen> {
                 floating: true,
                 expandedHeight: 120,
                 backgroundColor:
-                    isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
+                    isDark ? YtmColors.bg : YtmColors.lightBg,
                 elevation: 0,
                 flexibleSpace: FlexibleSpaceBar(
                   titlePadding: EdgeInsets.only(left: hPad, bottom: 44),
                   title: Text(
-                    AppLocalizations.of(context)?.yourLibrary ?? 'Your Library',
+                    AppLocalizations.of(context)?.library ?? 'Library',
                     style: TextStyle(
-                      fontSize: _isDesktop ? 24 : 20,
-                      fontWeight: FontWeight.bold,
+                      fontSize: _isDesktop ? 30 : 28,
+                      fontWeight: FontWeight.w700,
                       color: isDark ? Colors.white : Colors.black87,
-                      letterSpacing: -0.5,
+                      letterSpacing: -0.4,
                     ),
                   ),
                 ),
@@ -545,33 +547,19 @@ class _LibraryScreenState extends State<LibraryScreen> {
                       physics: const BouncingScrollPhysics(),
                       child: Row(
                         children: [
-                          if (_selectedFilter != null) ...[
-                            GestureDetector(
-                              onTap: () =>
-                                  setState(() => _selectedFilter = null),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 6),
-                                margin: const EdgeInsets.only(right: 8),
-                                decoration: BoxDecoration(
-                                  color: isDark
-                                      ? const Color(0xFF282828)
-                                      : Colors.grey[300],
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Icon(CupertinoIcons.clear,
-                                    size: 14,
-                                    color:
-                                        isDark ? Colors.white : Colors.black),
-                              ),
-                            ),
-                          ],
                           _buildFilterChip(
                               'Playlists',
                               AppLocalizations.of(context)?.playlists ??
                                   'Playlists',
                               isDark),
                           const SizedBox(width: 8),
+                          if (!isYoutube) ...[
+                            _buildFilterChip(
+                                'Songs',
+                                AppLocalizations.of(context)?.songs ?? 'Songs',
+                                isDark),
+                            const SizedBox(width: 8),
+                          ],
                           _buildFilterChip(
                               'Albums',
                               AppLocalizations.of(context)?.albums ?? 'Albums',
@@ -588,13 +576,6 @@ class _LibraryScreenState extends State<LibraryScreen> {
                               AppLocalizations.of(context)?.downloadedSongs ??
                                   'Downloaded',
                               isDark),
-                          if (!isYoutube) ...[
-                            const SizedBox(width: 8),
-                            _buildFilterChip(
-                                'Songs',
-                                AppLocalizations.of(context)?.songs ?? 'Songs',
-                                isDark),
-                          ],
                         ],
                       ),
                     ),
@@ -665,7 +646,9 @@ class _LibraryScreenState extends State<LibraryScreen> {
 
   Widget _buildFilterChip(String key, String label, bool isDark) {
     final isSelected = _selectedFilter == key;
-    return GestureDetector(
+    return YtmFilterChip(
+      label: label,
+      selected: isSelected,
       onTap: () {
         final willSelect = !isSelected;
         setState(() {
@@ -679,30 +662,6 @@ class _LibraryScreenState extends State<LibraryScreen> {
           }
         }
       },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? Theme.of(context).colorScheme.primary
-              : (isDark ? const Color(0xFF282828) : const Color(0xFFE5E7EB)),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: isSelected
-                ? (ThemeData.estimateBrightnessForColor(
-                            Theme.of(context).colorScheme.primary) ==
-                        Brightness.dark
-                    ? Colors.white
-                    : Colors.black)
-                : (isDark ? Colors.white : Colors.black87),
-          ),
-        ),
-      ),
     );
   }
 

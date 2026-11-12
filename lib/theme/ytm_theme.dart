@@ -76,6 +76,16 @@ class YtmTheme {
       listTileTheme: ListTileThemeData(
         iconColor: textSecondary,
         textColor: text,
+        titleTextStyle: TextStyle(
+          fontSize: 15,
+          fontWeight: FontWeight.w600,
+          color: text,
+        ),
+        subtitleTextStyle: TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.w400,
+          color: textSecondary,
+        ),
         contentPadding: const EdgeInsets.symmetric(horizontal: YtmSpacing.md),
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
