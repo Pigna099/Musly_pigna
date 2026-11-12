@@ -91,6 +91,7 @@ class _RequestsScreenState extends State<RequestsScreen> {
 
   Future<void> _runSearch(String rawQuery) async {
     final query = rawQuery.trim();
+    final generation = ++_searchGeneration;
     if (query.isEmpty) {
       setState(() {
         _query = '';
@@ -109,7 +110,6 @@ class _RequestsScreenState extends State<RequestsScreen> {
       return;
     }
 
-    final generation = ++_searchGeneration;
     setState(() {
       _query = query;
       _searching = true;
@@ -133,7 +133,11 @@ class _RequestsScreenState extends State<RequestsScreen> {
   }
 
   Future<void> _requestDownload(RequestSearchResult result) async {
-    if (result.videoId.isEmpty || _starting.contains(result.videoId)) return;
+    if (result.videoId.isEmpty ||
+        _starting.contains(result.videoId) ||
+        _jobByVideo.containsKey(result.videoId)) {
+      return;
+    }
     setState(() => _starting.add(result.videoId));
     try {
       final jobId = await _api.download(result);
@@ -194,9 +198,6 @@ class _RequestsScreenState extends State<RequestsScreen> {
         } else if (updated.status == RequestJobStatus.error &&
             _notifiedDone.add(updated.id)) {
           _showSnack(updated.error ?? 'Download failed.', isError: true);
-          if (videoId != null) {
-            setState(() => _jobByVideo.remove(videoId));
-          }
         }
       } catch (_) {
         // Transient network error: keep polling while the job is active.
@@ -261,7 +262,7 @@ class _RequestsScreenState extends State<RequestsScreen> {
               );
               try {
                 await _api.saveConfig(config);
-                if (!mounted) return;
+                if (!mounted || !sheetContext.mounted) return;
                 setState(() {
                   _config = config.copyWith(
                     baseUrl: _apiNormalizedUrl(normalizedUrl),
@@ -273,6 +274,7 @@ class _RequestsScreenState extends State<RequestsScreen> {
                   _runSearch(_query);
                 }
               } catch (e) {
+                if (!sheetContext.mounted) return;
                 setSheetState(() {
                   saving = false;
                   error = e.toString();
@@ -706,7 +708,7 @@ class _RequestsScreenState extends State<RequestsScreen> {
       if (result.album.isNotEmpty) result.album,
       if (result.durationLabel.isNotEmpty) result.durationLabel,
     ];
-    if (activeJob != null && !activeJob.isTerminal) {
+    if (activeJob != null) {
       subtitleParts.add(_jobLabel(activeJob));
     }
 
@@ -747,15 +749,16 @@ class _RequestsScreenState extends State<RequestsScreen> {
         ),
       );
     } else {
+      final failedJob = failed ? activeJob : null;
       trailing = IconButton(
         tooltip: failed ? 'Retry download' : 'Download',
         onPressed: () {
-          if (failed) {
+          if (failedJob != null) {
             setState(() {
-              _jobs.remove(activeJob.id);
-              _videoByJob.remove(activeJob.id);
+              _jobs.remove(failedJob.id);
+              _videoByJob.remove(failedJob.id);
               _jobByVideo.remove(result.videoId);
-              _notifiedDone.remove(activeJob.id);
+              _notifiedDone.remove(failedJob.id);
             });
           }
           _requestDownload(result);
