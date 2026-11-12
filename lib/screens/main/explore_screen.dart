@@ -10,6 +10,7 @@ import 'package:musly/screens/media/album_collection_screen.dart';
 import 'package:musly/screens/media/downloads_screen.dart';
 import 'package:musly/screens/media/genres_screen.dart';
 import 'package:musly/screens/media/radio_screen.dart';
+import 'package:musly/screens/settings/settings_screen.dart';
 import 'package:musly/theme/ytm_tokens.dart';
 import 'package:musly/utils/navigation_helper.dart';
 import 'package:musly/widgets/cards/album_card.dart';
@@ -43,6 +44,8 @@ class ExploreScreen extends StatelessWidget {
         showSearch: true,
         showAvatar: true,
         avatarLetter: username,
+        onAvatarTap: () =>
+            NavigationHelper.push(context, const SettingsScreen()),
         onSearchTap: () =>
             NavigationHelper.push(context, const SearchScreen()),
       ),

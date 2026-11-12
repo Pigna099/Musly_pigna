@@ -13,6 +13,7 @@ class YtmTopBar extends StatelessWidget implements PreferredSizeWidget {
   final bool showSearch;
   final bool showAvatar;
   final String avatarLetter;
+  final VoidCallback? onAvatarTap;
   final Widget? leading;
   final PreferredSizeWidget? bottom;
 
@@ -25,6 +26,7 @@ class YtmTopBar extends StatelessWidget implements PreferredSizeWidget {
     this.showSearch = false,
     this.showAvatar = false,
     this.avatarLetter = 'M',
+    this.onAvatarTap,
     this.leading,
     this.bottom,
   });
@@ -77,17 +79,22 @@ class YtmTopBar extends StatelessWidget implements PreferredSizeWidget {
         if (showAvatar)
           Padding(
             padding: const EdgeInsets.only(left: 4, right: 12),
-            child: Container(
-              width: 28,
-              height: 28,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(color: surface, shape: BoxShape.circle),
-              child: Text(
-                avatarLetter.isEmpty ? 'M' : avatarLetter[0].toUpperCase(),
-                style: TextStyle(
-                  color: fg,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: onAvatarTap,
+              child: Container(
+                width: 28,
+                height: 28,
+                alignment: Alignment.center,
+                decoration:
+                    BoxDecoration(color: surface, shape: BoxShape.circle),
+                child: Text(
+                  avatarLetter.isEmpty ? 'M' : avatarLetter[0].toUpperCase(),
+                  style: TextStyle(
+                    color: fg,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             ),
