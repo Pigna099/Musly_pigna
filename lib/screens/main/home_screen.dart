@@ -208,6 +208,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 ? mixes['Discover Mix']!
                 : personalizedFeed;
 
+            // Server-generated playlists (Pignify Watch, Explo, weekly/daily
+            // mixes) get their own row and are hidden from "Your playlists".
+            final discoveryPattern =
+                RegExp(r'pignify|explo|weekly|daily', caseSensitive: false);
+            final discoveryPlaylists = playlists
+                .where((p) => discoveryPattern.hasMatch(p.name))
+                .toList();
+            playlists = playlists
+                .where((p) => !discoveryPattern.hasMatch(p.name))
+                .toList();
+
             final sections = <Widget>[];
             void addSection(Widget child) {
               sections.add(child);
@@ -358,6 +369,31 @@ class _HomeScreenState extends State<HomeScreen> {
                       size: cardSize,
                       onTap: () => _playList(context, topHits,
                           index: topHits.indexOf(song)),
+                    );
+                  }).toList(),
+                ),
+              );
+            }
+
+            if (showPlaylists && discoveryPlaylists.isNotEmpty) {
+              addSection(
+                YtmSection(
+                  title: 'Pignify picks',
+                  cardHeight: cardSize + 64,
+                  padding: EdgeInsets.symmetric(horizontal: hPad),
+                  children: discoveryPlaylists.take(12).map((playlist) {
+                    return YtmMediaCard(
+                      title: playlist.name,
+                      subtitle: playlist.songCount != null
+                          ? '${playlist.songCount} songs'
+                          : 'Playlist',
+                      artwork: PlaylistArtwork(
+                        playlist: playlist,
+                        size: cardSize,
+                        borderRadius: YtmRadii.card,
+                      ),
+                      size: cardSize,
+                      onTap: () => _openPlaylist(context, playlist),
                     );
                   }).toList(),
                 ),
