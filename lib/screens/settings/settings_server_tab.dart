@@ -12,6 +12,7 @@ import 'package:musly/services/subsonic_service.dart';
 import 'package:musly/theme/app_theme.dart';
 import 'package:musly/utils/navigation_helper.dart';
 import 'package:musly/screens/media/jukebox_screen.dart';
+import 'package:musly/screens/media/requests_screen.dart';
 import 'package:musly/screens/auth/add_server_screen.dart';
 import 'package:musly/widgets/settings/settings_section_card.dart';
 import 'package:musly/widgets/settings/settings_switch_tile.dart';
@@ -56,6 +57,28 @@ class _SettingsServerTabState extends State<SettingsServerTab> {
           SettingsSectionCard(
             title: l10n.sectionJukebox,
             children: [_buildJukeboxSection()],
+          ),
+        ],
+        if (!isYoutube && currentConfig?.isJellyfin != true) ...[
+          const SizedBox(height: 24),
+          SettingsSectionCard(
+            title: 'Pignify Requests',
+            children: [
+              SettingsListTile(
+                icon: CupertinoIcons.cloud_download,
+                gradientColors: const [
+                  Color(0xFFFF3B4E),
+                  Color(0xFFB3122A),
+                ],
+                title: 'Request music',
+                subtitle:
+                    'Search YouTube Music and add tracks to your library',
+                trailing:
+                    const Icon(CupertinoIcons.chevron_forward, size: 18),
+                onTap: () =>
+                    NavigationHelper.push(context, const RequestsScreen()),
+              ),
+            ],
           ),
         ],
         const SizedBox(height: 24),

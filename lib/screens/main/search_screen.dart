@@ -21,6 +21,7 @@ import 'package:musly/screens/media/album_collection_screen.dart';
 import 'package:musly/screens/media/song_collection_screen.dart';
 import 'package:musly/screens/media/favorites_screen.dart';
 import 'package:musly/screens/media/radio_screen.dart';
+import 'package:musly/screens/media/requests_screen.dart';
 import 'package:musly/services/player_ui_settings_service.dart';
 import 'package:musly/l10n/app_localizations.dart';
 
@@ -340,6 +341,20 @@ class _SearchScreenState extends State<SearchScreen> {
                 spacing: spacing,
                 runSpacing: spacing,
                 children: [
+                  if (!isYoutube && authProvider.config?.isJellyfin != true)
+                    SizedBox(
+                      width: cardWidth,
+                      child: BrowseCategoryCard(
+                        title: 'Request Music',
+                        gradientColors: const [
+                          Color(0xFFFF3B4E),
+                          Color(0xFFB3122A)
+                        ],
+                        icon: CupertinoIcons.cloud_download,
+                        onTap: () => NavigationHelper.push(
+                            context, const RequestsScreen()),
+                      ),
+                    ),
                   SizedBox(
                     width: cardWidth,
                     child: BrowseCategoryCard(

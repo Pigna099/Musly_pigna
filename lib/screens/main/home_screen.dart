@@ -312,7 +312,9 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             }
 
-            if ((showMadeForYou || showMusic) && discoverSongs.isNotEmpty) {
+            if (discoveryPlaylists.isEmpty &&
+                (showMadeForYou || showMusic) &&
+                discoverSongs.isNotEmpty) {
               addSection(
                 YtmSection(
                   title: 'Discover',
@@ -378,7 +380,7 @@ class _HomeScreenState extends State<HomeScreen> {
             if (showPlaylists && discoveryPlaylists.isNotEmpty) {
               addSection(
                 YtmSection(
-                  title: 'Pignify picks',
+                  title: 'Discover',
                   cardHeight: cardSize + 64,
                   padding: EdgeInsets.symmetric(horizontal: hPad),
                   children: discoveryPlaylists.take(12).map((playlist) {
