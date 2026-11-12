@@ -74,7 +74,7 @@ class YtmSizes {
 
   static const double albumCard = 152;
   static const double mixCard = 160;
-  static const double artistCircle = 140;
+  static const double artistCircle = 120;
   static const double categoryCardHeight = 108;
 
   static const double actionChip = 36;

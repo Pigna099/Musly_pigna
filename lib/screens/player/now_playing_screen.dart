@@ -372,6 +372,25 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
                     ),
                   ),
                 ),
+              if (!isLandscape && _currentPage == 1)
+                Positioned(
+                  top: effectiveTopPadding > 0
+                      ? effectiveTopPadding + 16.0
+                      : 20.0,
+                  left: 0,
+                  right: 0,
+                  child: const Center(
+                    child: Text(
+                      'LYRICS',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1.1,
+                      ),
+                    ),
+                  ),
+                ),
               Positioned(
                 top: isLandscape
                     ? (effectiveTopPadding > 0

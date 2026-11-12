@@ -576,6 +576,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                               AppLocalizations.of(context)?.downloadedSongs ??
                                   'Downloaded',
                               isDark),
+                          const SizedBox(width: 16),
                         ],
                       ),
                     ),
@@ -1219,23 +1220,13 @@ class _LibraryScreenState extends State<LibraryScreen> {
       ),
       title: Text(title,
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-      subtitle: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(CupertinoIcons.pin_fill,
-              size: 12, color: Theme.of(context).colorScheme.primary),
-          const SizedBox(width: 4),
-          Flexible(
-            child: Text(
-              subtitle,
-              style: TextStyle(
-                  fontSize: 13,
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.w500),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
+      subtitle: Text(
+        subtitle,
+        style: const TextStyle(
+          fontSize: 13,
+          color: Colors.grey,
+        ),
+        overflow: TextOverflow.ellipsis,
       ),
       onTap: onTap,
     );

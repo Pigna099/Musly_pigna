@@ -44,11 +44,8 @@ class PlaybackControls extends StatelessWidget {
         ? Icons.repeat_one_rounded
         : Icons.repeat_rounded;
 
-    final themePrimary = Theme.of(context).colorScheme.primary;
-    final effectiveActiveColor = (accentColor == Colors.white ||
-            accentColor.computeLuminance() > 0.85)
-        ? (themePrimary != Colors.white ? themePrimary : const Color(0xFFFA243C))
-        : accentColor;
+    // YT Music uses white for active shuffle/repeat, regardless of artwork.
+    final effectiveActiveColor = Colors.white;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -124,12 +121,12 @@ class _PlayPauseButtonState extends State<_PlayPauseButton> {
           height: widget.size,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Colors.white.withValues(alpha: 0.2),
+            color: Colors.white,
           ),
           child: Icon(
             widget.isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
             size: widget.size * 0.6,
-            color: Colors.white,
+            color: Colors.black,
           ),
         ),
       ),

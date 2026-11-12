@@ -30,7 +30,8 @@ class PlayerUiSettingsService {
 
   SharedPreferences? _prefs;
 
-  final ValueNotifier<bool> showVolumeSliderNotifier = ValueNotifier(true);
+  final ValueNotifier<bool> showVolumeSliderNotifier =
+      ValueNotifier(defaultTargetPlatform != TargetPlatform.iOS);
   final ValueNotifier<bool> showStarRatingsNotifier = ValueNotifier(false);
   final ValueNotifier<bool> showMiniPlayerHeartNotifier = ValueNotifier(false);
   final ValueNotifier<bool> showMiniPlayerRepeatNotifier = ValueNotifier(false);
@@ -102,7 +103,8 @@ class PlayerUiSettingsService {
   }
 
   bool getShowVolumeSlider() {
-    return _prefs?.getBool(_keyShowVolumeSlider) ?? true;
+    return _prefs?.getBool(_keyShowVolumeSlider) ??
+        (defaultTargetPlatform != TargetPlatform.iOS);
   }
 
   Future<void> setShowStarRatings(bool show) async {

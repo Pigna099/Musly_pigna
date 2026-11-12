@@ -9,9 +9,11 @@ import '../../services/tv_detection_service.dart';
 import 'package:musly/services/recommendation_service.dart';
 import 'package:musly/services/usage_time_service.dart';
 import 'package:musly/theme/app_theme.dart';
+import 'package:musly/theme/ytm_tokens.dart';
 import 'package:musly/utils/navigation_helper.dart';
 import 'package:musly/widgets/widgets.dart';
 import 'package:musly/l10n/app_localizations.dart';
+import 'package:musly/screens/settings/settings_screen.dart';
 import 'home_screen.dart';
 import 'library_screen.dart';
 import 'explore_screen.dart';
@@ -315,44 +317,61 @@ class _MainScreenState extends State<MainScreen> {
             body: Column(
               children: [
                 if (widget.isOfflineMode || isLocalMode)
-                  Container(
-                    width: double.infinity,
-                    color: isLocalMode ? Colors.indigo : Colors.orange,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8,
-                      horizontal: 16,
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => NavigationHelper.push(
+                      context,
+                      const SettingsScreen(),
                     ),
-                    child: SafeArea(
-                      bottom: false,
-                      child: Row(
-                        children: [
-                          Icon(
-                            isLocalMode
-                                ? CupertinoIcons.folder_fill
-                                : CupertinoIcons.wifi_slash,
-                            color: Colors.white,
-                            size: 18,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
+                    child: Container(
+                      width: double.infinity,
+                      decoration: const BoxDecoration(
+                        color: YtmColors.surfaceHigh,
+                        border: Border(
+                          bottom: BorderSide(color: YtmColors.divider),
+                        ),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 8,
+                        horizontal: 16,
+                      ),
+                      child: SafeArea(
+                        bottom: false,
+                        child: Row(
+                          children: [
+                            Icon(
                               isLocalMode
-                                  ? AppLocalizations.of(
-                                      context,
-                                    )!
-                                      .localFilesModeBanner
-                                  : AppLocalizations.of(
-                                      context,
-                                    )!
-                                      .offlineModeBanner,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
+                                  ? CupertinoIcons.folder_fill
+                                  : CupertinoIcons.wifi_slash,
+                              color: Colors.white70,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                isLocalMode
+                                    ? AppLocalizations.of(
+                                        context,
+                                      )!
+                                        .localFilesModeBanner
+                                    : AppLocalizations.of(
+                                        context,
+                                      )!
+                                        .offlineModeBanner,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                            const Icon(
+                              Icons.chevron_right_rounded,
+                              color: Colors.white38,
+                              size: 18,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
