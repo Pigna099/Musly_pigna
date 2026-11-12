@@ -124,89 +124,115 @@ class _QueueViewState extends State<QueueView> {
               final isPlaying = index == currentIndex;
               final isPast = index < currentIndex;
 
-              return ListTile(
+              return Dismissible(
                 key: ValueKey('queue_item_${song.id}_$index'),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                leading: KeyedSubtree(
-                  key: isPlaying && !_initialScrollDone
-                      ? _currentItemKey
-                      : null,
-                  child: AlbumArtwork(
-                    coverArt: song.coverArt,
-                    size: 48,
-                    borderRadius: 8,
+                direction: DismissDirection.endToStart,
+                background: Container(
+                  alignment: Alignment.centerRight,
+                  padding: const EdgeInsets.only(right: 24),
+                  color: const Color(0xFFB3261E),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.delete_outline_rounded,
+                        color: Colors.white,
+                        size: 22,
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        'Remove',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                title: Text(
-                  song.title,
-                  style: TextStyle(
-                    color: isPlaying
-                        ? Theme.of(context).colorScheme.primary
-                        : (isPast ? Colors.white38 : Colors.white),
-                    fontWeight: isPlaying ? FontWeight.bold : FontWeight.normal,
-                    fontSize: 16,
+                onDismissed: (_) => provider.removeFromQueue(index),
+                child: ListTile(
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  leading: KeyedSubtree(
+                    key: isPlaying && !_initialScrollDone
+                        ? _currentItemKey
+                        : null,
+                    child: AlbumArtwork(
+                      coverArt: song.coverArt,
+                      size: 48,
+                      borderRadius: 4,
+                    ),
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                subtitle: Text(
-                  song.artist ?? l10n.unknownArtist,
-                  style: TextStyle(
-                    color: isPlaying
-                        ? Theme.of(context)
-                            .colorScheme
-                            .primary
-                            .withValues(alpha: 0.8)
-                        : (isPast ? Colors.white24 : Colors.white70),
-                    fontSize: 14,
+                  title: Text(
+                    song.title,
+                    style: TextStyle(
+                      color: isPlaying
+                          ? Colors.white
+                          : (isPast ? Colors.white38 : Colors.white),
+                      fontWeight:
+                          isPlaying ? FontWeight.w600 : FontWeight.w400,
+                      fontSize: 15,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (isPlaying)
-                      Padding(
-                        padding: const EdgeInsets.only(right: 6),
-                        child: Icon(
-                          Icons.equalizer_rounded,
-                          color: Theme.of(context).colorScheme.primary,
+                  subtitle: Text(
+                    song.artist ?? l10n.unknownArtist,
+                    style: TextStyle(
+                      color: isPlaying
+                          ? Colors.white70
+                          : (isPast ? Colors.white24 : Colors.white54),
+                      fontSize: 13,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (isPlaying)
+                        const Padding(
+                          padding: EdgeInsets.only(right: 6),
+                          child: Icon(
+                            Icons.equalizer_rounded,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.more_vert_rounded,
+                          color: Colors.white70,
                           size: 20,
                         ),
+                        splashRadius: 18,
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(
+                            minWidth: 32, minHeight: 32),
+                        onPressed: () => SongOptionsModal.show(context, song),
                       ),
-                    IconButton(
-                      icon: const Icon(
-                        Icons.more_vert_rounded,
-                        color: Colors.white70,
-                        size: 20,
-                      ),
-                      splashRadius: 18,
-                      padding: EdgeInsets.zero,
-                      constraints:
-                          const BoxConstraints(minWidth: 32, minHeight: 32),
-                      onPressed: () => SongOptionsModal.show(context, song),
-                    ),
-                    ReorderableDragStartListener(
-                      index: index,
-                      child: const Padding(
-                        padding: EdgeInsets.only(left: 4, right: 2),
-                        child: Icon(
-                          Icons.drag_handle_rounded,
-                          color: Colors.white38,
-                          size: 22,
+                      ReorderableDragStartListener(
+                        index: index,
+                        child: const Padding(
+                          padding: EdgeInsets.only(left: 4, right: 2),
+                          child: Icon(
+                            Icons.drag_handle_rounded,
+                            color: Colors.white38,
+                            size: 22,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
+                  onTap: () {
+                    provider.skipToIndex(index);
+                  },
+                  onLongPress: () {
+                    SongOptionsModal.show(context, song);
+                  },
                 ),
-                onTap: () {
-                  provider.skipToIndex(index);
-                },
-                onLongPress: () {
-                  SongOptionsModal.show(context, song);
-                },
               );
             },
           ),
