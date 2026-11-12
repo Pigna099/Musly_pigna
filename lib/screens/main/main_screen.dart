@@ -7,7 +7,6 @@ import 'package:musly/services/local_music_service.dart';
 import '../../widgets/navigation/tv_remote_scope.dart';
 import '../../services/tv_detection_service.dart';
 import 'package:musly/services/recommendation_service.dart';
-import 'package:musly/services/theme_service.dart';
 import 'package:musly/services/usage_time_service.dart';
 import 'package:musly/theme/app_theme.dart';
 import 'package:musly/utils/navigation_helper.dart';
@@ -15,9 +14,9 @@ import 'package:musly/widgets/widgets.dart';
 import 'package:musly/l10n/app_localizations.dart';
 import 'home_screen.dart';
 import 'library_screen.dart';
-import 'search_screen.dart';
+import 'explore_screen.dart';
 import 'tv_main_screen.dart';
-import 'package:musly/screens/media/fantasy_screen.dart';
+import 'package:musly/widgets/navigation/ytm_bottom_nav.dart';
 
 class PlayPauseIntent extends Intent {
   const PlayPauseIntent();
@@ -60,13 +59,11 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
-  int _searchTapCount = 0;
-  DateTime _lastSearchTap = DateTime.fromMillisecondsSinceEpoch(0);
 
   final List<Widget> _screens = const [
     HomeScreen(),
+    ExploreScreen(),
     LibraryScreen(),
-    SearchScreen(),
   ];
 
   // While a dialog, sheet or page on the root navigator (now playing, for one)
@@ -300,7 +297,6 @@ class _MainScreenState extends State<MainScreen> {
       );
     }
 
-    final bool liquidGlass = Provider.of<ThemeService>(context).liquidGlass;
     return Selector<PlayerProvider, bool>(
       selector: (_, p) => p.currentSong != null || p.isPlayingRadio,
       builder: (context, hasCurrentSong, _) {
@@ -429,9 +425,7 @@ class _MainScreenState extends State<MainScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       if (hasCurrentSong) const MiniPlayer(),
-                      liquidGlass
-                          ? _buildGlassBottomNav(context)
-                          : _buildBottomNav(context),
+                      _buildBottomNav(context),
                     ],
                   ),
               ],
@@ -458,185 +452,33 @@ class _MainScreenState extends State<MainScreen> {
     SystemNavigator.pop();
   }
 
-  Widget _buildGlassBottomNav(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final accent = theme.colorScheme.primary;
-    final safeBottom = MediaQuery.of(context).padding.bottom;
-    final l10n = AppLocalizations.of(context)!;
-
-    final items = [
-      (
-        icon: CupertinoIcons.music_house,
-        activeIcon: CupertinoIcons.music_house_fill,
-        label: l10n.home,
-      ),
-      (
-        icon: CupertinoIcons.collections,
-        activeIcon: CupertinoIcons.collections_solid,
-        label: l10n.library,
-      ),
-      (
-        icon: CupertinoIcons.search,
-        activeIcon: CupertinoIcons.search,
-        label: l10n.search,
-      ),
-    ];
-
-    return Padding(
-      padding: EdgeInsets.fromLTRB(12, 4, 12, safeBottom > 0 ? safeBottom : 12),
-      child: Container(
-        height: 62,
-        decoration: BoxDecoration(
-          color: isDark ? const Color(0xF018181A) : const Color(0xF5FFFFFF),
-          borderRadius: BorderRadius.circular(30),
-          border: Border.all(
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.12)
-                : Colors.black.withValues(alpha: 0.08),
-            width: 0.8,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.18),
-              blurRadius: 16,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Row(
-          children: List.generate(items.length, (idx) {
-            final item = items[idx];
-            final isSelected = _currentIndex == idx;
-            return Expanded(
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () {
-                  final navigatorState =
-                      NavigationHelper.appNavigatorKey.currentState;
-                  navigatorState?.popUntil((route) => route.isFirst);
-
-                  if (idx == 2) {
-                    final now = DateTime.now();
-                    if (now.difference(_lastSearchTap).inSeconds > 3) {
-                      _searchTapCount = 0;
-                    }
-                    _searchTapCount++;
-                    _lastSearchTap = now;
-                    if (_searchTapCount >= 11) {
-                      _searchTapCount = 0;
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const FantasyScreen(),
-                        ),
-                      );
-                      return;
-                    }
-                  } else {
-                    _searchTapCount = 0;
-                  }
-
-                  setState(() => _currentIndex = idx);
-                },
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 150),
-                      child: Icon(
-                        isSelected ? item.activeIcon : item.icon,
-                        key: ValueKey(isSelected),
-                        color: isSelected
-                            ? accent
-                            : (isDark ? Colors.white54 : Colors.black38),
-                        size: 22,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      item.label,
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight:
-                            isSelected ? FontWeight.w600 : FontWeight.w400,
-                        color: isSelected
-                            ? accent
-                            : (isDark ? Colors.white54 : Colors.black38),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }),
-        ),
-      ),
-    );
-  }
-
   Widget _buildBottomNav(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
-        border: Border(
-          top: BorderSide(
-            color: isDark ? const Color(0xFF38383A) : const Color(0xFFE5E5EA),
-            width: 0.5,
-          ),
+    return YtmBottomNav(
+      selectedIndex: _currentIndex,
+      onDestinationSelected: (index) {
+        NavigationHelper.appNavigatorKey.currentState
+            ?.popUntil((route) => route.isFirst);
+        setState(() => _currentIndex = index);
+      },
+      destinations: [
+        YtmNavDestination(
+          icon: Icons.home_outlined,
+          activeIcon: Icons.home_rounded,
+          label: l10n.home,
         ),
-      ),
-      child: SafeArea(
-        top: false,
-        child: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: (index) {
-            final navigatorState =
-                NavigationHelper.appNavigatorKey.currentState;
-            navigatorState?.popUntil((route) => route.isFirst);
-
-            if (index == 2) {
-              final now = DateTime.now();
-              if (now.difference(_lastSearchTap).inSeconds > 3) {
-                _searchTapCount = 0;
-              }
-              _searchTapCount++;
-              _lastSearchTap = now;
-              if (_searchTapCount >= 11) {
-                _searchTapCount = 0;
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const FantasyScreen()),
-                );
-                return;
-              }
-            } else {
-              _searchTapCount = 0;
-            }
-
-            setState(() => _currentIndex = index);
-          },
-          items: [
-            BottomNavigationBarItem(
-              icon: const Icon(CupertinoIcons.music_house),
-              activeIcon: const Icon(CupertinoIcons.music_house_fill),
-              label: l10n.home,
-            ),
-            BottomNavigationBarItem(
-              icon: const Icon(CupertinoIcons.collections),
-              activeIcon: const Icon(CupertinoIcons.collections_solid),
-              label: l10n.library,
-            ),
-            BottomNavigationBarItem(
-              icon: const Icon(CupertinoIcons.search),
-              activeIcon: const Icon(CupertinoIcons.search),
-              label: l10n.search,
-            ),
-          ],
+        const YtmNavDestination(
+          icon: Icons.explore_outlined,
+          activeIcon: Icons.explore_rounded,
+          label: 'Explore',
         ),
-      ),
+        YtmNavDestination(
+          icon: Icons.library_music_outlined,
+          activeIcon: Icons.library_music_rounded,
+          label: l10n.library,
+        ),
+      ],
     );
   }
 }

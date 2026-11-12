@@ -23,6 +23,7 @@ import 'package:musly/screens/settings/settings_screen.dart';
 import 'package:musly/screens/wrapped/wrapped_screen.dart';
 import 'package:musly/services/wrapped_service.dart';
 import 'package:musly/l10n/app_localizations.dart';
+import 'search_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -129,6 +130,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               actions: [
+                IconButton(
+                  icon: Icon(
+                    CupertinoIcons.search,
+                    color: isDark ? Colors.white : Colors.black87,
+                    size: 22,
+                  ),
+                  tooltip: AppLocalizations.of(context)!.search,
+                  onPressed: () =>
+                      NavigationHelper.push(context, const SearchScreen()),
+                ),
                 IconButton(
                   icon: Icon(
                     CupertinoIcons.clock,
