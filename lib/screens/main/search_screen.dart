@@ -9,9 +9,10 @@ import 'package:musly/providers/player_provider.dart';
 import 'package:musly/providers/auth_provider.dart';
 import 'package:musly/services/subsonic_service.dart';
 import 'package:musly/services/tv_detection_service.dart';
-import 'package:musly/theme/app_theme.dart';
+import 'package:musly/theme/ytm_tokens.dart';
 import 'package:musly/utils/navigation_helper.dart';
 import 'package:musly/widgets/widgets.dart';
+import 'package:musly/widgets/common/ytm_filter_chip.dart';
 import 'package:musly/screens/detail/album_screen.dart';
 import 'package:musly/screens/detail/artist_screen.dart';
 import 'package:musly/screens/detail/playlist_screen.dart';
@@ -133,28 +134,27 @@ class _SearchScreenState extends State<SearchScreen> {
 
     return Scaffold(
       backgroundColor:
-          isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
+          isDark ? YtmColors.bg : YtmColors.lightBg,
       resizeToAvoidBottomInset: false,
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
           SliverAppBar(
-            automaticallyImplyLeading: false,
             pinned: true,
             floating: false,
             expandedHeight: 140,
             backgroundColor:
-                isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
+                isDark ? YtmColors.bg : YtmColors.lightBg,
             elevation: 0,
             flexibleSpace: FlexibleSpaceBar(
               titlePadding: EdgeInsets.only(left: hPad, bottom: 62),
               title: Text(
                 'Search',
                 style: TextStyle(
-                  fontSize: _isDesktop ? 28 : 24,
-                  fontWeight: FontWeight.bold,
+                  fontSize: _isDesktop ? 30 : 28,
+                  fontWeight: FontWeight.w700,
                   color: isDark ? Colors.white : Colors.black87,
-                  letterSpacing: -0.5,
+                  letterSpacing: -0.4,
                 ),
               ),
             ),
@@ -165,15 +165,10 @@ class _SearchScreenState extends State<SearchScreen> {
                 child: Container(
                   height: 48,
                   decoration: BoxDecoration(
-                    color: isDark ? Colors.white : const Color(0xFFE5E7EB),
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 6,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+                    color: isDark
+                        ? YtmColors.surfaceHigh
+                        : YtmColors.lightSurfaceHigh,
+                    borderRadius: BorderRadius.circular(24),
                   ),
                   child: TextField(
                     controller: _searchController,
@@ -188,30 +183,32 @@ class _SearchScreenState extends State<SearchScreen> {
                       _performSearch(v.trim());
                       _focusNode.unfocus();
                     },
-                    style: const TextStyle(
-                      color: Colors.black87,
+                    style: TextStyle(
+                      color: isDark ? Colors.white : Colors.black87,
                       fontSize: 15,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w500,
                     ),
                     decoration: InputDecoration(
                       hintText:
                           AppLocalizations.of(context)!.whatDoYouWantToPlay,
                       hintStyle: TextStyle(
-                        color: Colors.black.withValues(alpha: 0.6),
+                        color: isDark ? Colors.white60 : Colors.black54,
                         fontSize: 15,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w400,
                       ),
-                      prefixIcon: const Icon(
+                      prefixIcon: Icon(
                         CupertinoIcons.search,
-                        color: Colors.black87,
+                        color: isDark ? Colors.white70 : Colors.black54,
                         size: 22,
                       ),
                       suffixIcon: query.isNotEmpty
                           ? IconButton(
-                              icon: const Icon(
-                                  CupertinoIcons.clear_circled_solid,
-                                  color: Colors.black54,
-                                  size: 20),
+                              icon: Icon(
+                                CupertinoIcons.clear_circled_solid,
+                                color:
+                                    isDark ? Colors.white60 : Colors.black54,
+                                size: 20,
+                              ),
                               onPressed: _clearSearch,
                             )
                           : null,
@@ -258,37 +255,10 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Widget _buildFilterChip(String key, String label, bool isDark) {
-    final isSelected = _selectedFilter == key;
-    final primary = Theme.of(context).colorScheme.primary;
-    final onPrimary =
-        ThemeData.estimateBrightnessForColor(primary) == Brightness.dark
-            ? Colors.white
-            : Colors.black;
-
-    return GestureDetector(
+    return YtmFilterChip(
+      label: label,
+      selected: _selectedFilter == key,
       onTap: () => setState(() => _selectedFilter = key),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? primary
-              : (isDark ? const Color(0xFF282828) : const Color(0xFFE5E7EB)),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Center(
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: isSelected
-                  ? onPrimary
-                  : (isDark ? Colors.white : Colors.black87),
-            ),
-          ),
-        ),
-      ),
     );
   }
 
