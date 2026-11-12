@@ -137,9 +137,8 @@ class RequestJob {
     final rawProgress = json['progress'];
     double? progress;
     if (rawProgress is num) {
-      var value = rawProgress.toDouble();
-      if (value > 1) value /= 100;
-      progress = value.clamp(0.0, 1.0).toDouble();
+      // The Pignify API reports progress as an integer percentage (0-100).
+      progress = (rawProgress.toDouble() / 100).clamp(0.0, 1.0).toDouble();
     }
 
     return RequestJob(
@@ -379,7 +378,12 @@ class RequestsApiService {
     final data = error.response?.data;
     String? detail;
     if (data is Map) {
-      detail = (data['detail'] ?? data['error'] ?? data['message'])?.toString();
+      final raw = data['detail'] ?? data['error'] ?? data['message'];
+      if (raw is Map) {
+        detail = (raw['message'] ?? raw['error'])?.toString();
+      } else {
+        detail = raw?.toString();
+      }
     }
     if (status == 401 || status == 403) {
       return const RequestsApiException(
