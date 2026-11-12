@@ -22,6 +22,8 @@ class AddServerScreen extends StatefulWidget {
 }
 
 class _AddServerScreenState extends State<AddServerScreen> {
+  static const String _defaultSubsonicUrl = 'https://pignify.ddns.net';
+
   final _formKey = GlobalKey<FormState>();
   late String _selectedFamily;
 
@@ -53,6 +55,9 @@ class _AddServerScreenState extends State<AddServerScreen> {
     _selectedFamily = (isIos && widget.initialFamily == 'youtube')
         ? 'subsonic'
         : (widget.initialFamily ?? 'subsonic');
+    if (_selectedFamily == 'subsonic') {
+      _urlController.text = _defaultSubsonicUrl;
+    }
     _hasYoutubeFuture =
         Provider.of<AuthProvider>(context, listen: false).hasYoutubeProfile();
   }
@@ -412,6 +417,12 @@ class _AddServerScreenState extends State<AddServerScreen> {
         setState(() {
           _selectedFamily = family;
           _errorMessage = null;
+          if (family == 'subsonic' && _urlController.text.trim().isEmpty) {
+            _urlController.text = _defaultSubsonicUrl;
+          } else if (family != 'subsonic' &&
+              _urlController.text.trim() == _defaultSubsonicUrl) {
+            _urlController.clear();
+          }
         });
       },
       borderRadius: BorderRadius.circular(16),
