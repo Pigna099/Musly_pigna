@@ -7,6 +7,7 @@ import 'package:musly/widgets/now_playing/playback_progress_slider.dart';
 import 'package:musly/widgets/now_playing/volume_slider.dart';
 import 'package:musly/widgets/now_playing/now_playing_bottom_actions.dart';
 import 'lyrics_screen.dart';
+import 'related_tab.dart';
 import 'package:musly/models/lyric_line.dart';
 import 'package:provider/provider.dart';
 import 'package:musly/providers/player_provider.dart';
@@ -347,6 +348,7 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
                                       ),
                               ),
                         const QueueView(),
+                        RelatedTab(song: _lastSong),
                       ],
                     ),
                   ),
@@ -900,7 +902,7 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
                         NowPlayingBottomActions(
                           isLyricsActive: _currentPage == 1,
                           isQueueActive: _currentPage == 2,
-                          accentColor: accentColor,
+                          isRelatedActive: _currentPage == 3,
                           onLyricsTap: () {
                             if (_currentPage == 1) {
                               _syncLyricsWakelock(page: 0);
@@ -923,6 +925,19 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
                             } else {
                               _syncLyricsWakelock(page: 2);
                               _pageController.animateToPage(2,
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut);
+                            }
+                          },
+                          onRelatedTap: () {
+                            if (_currentPage == 3) {
+                              _syncLyricsWakelock(page: 0);
+                              _pageController.animateToPage(0,
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut);
+                            } else {
+                              _syncLyricsWakelock(page: 3);
+                              _pageController.animateToPage(3,
                                   duration: const Duration(milliseconds: 300),
                                   curve: Curves.easeInOut);
                             }
@@ -1071,7 +1086,7 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
               NowPlayingBottomActions(
                 isLyricsActive: _currentPage == 1,
                 isQueueActive: _currentPage == 2,
-                accentColor: accentColor,
+                isRelatedActive: _currentPage == 3,
                 onLyricsTap: () {
                   if (_currentPage == 1) {
                     _syncLyricsWakelock(page: 0);
@@ -1094,6 +1109,19 @@ class _NowPlayingScreenState extends State<NowPlayingScreen>
                   } else {
                     _syncLyricsWakelock(page: 2);
                     _pageController.animateToPage(2,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut);
+                  }
+                },
+                onRelatedTap: () {
+                  if (_currentPage == 3) {
+                    _syncLyricsWakelock(page: 0);
+                    _pageController.animateToPage(0,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut);
+                  } else {
+                    _syncLyricsWakelock(page: 3);
+                    _pageController.animateToPage(3,
                         duration: const Duration(milliseconds: 300),
                         curve: Curves.easeInOut);
                   }

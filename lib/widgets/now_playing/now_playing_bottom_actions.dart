@@ -1,45 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:musly/widgets/navigation/cast_button.dart';
 
+/// Bottom tabs of Now Playing, in the classic YouTube Music arrangement:
+/// UP NEXT / LYRICS / RELATED.
 class NowPlayingBottomActions extends StatelessWidget {
   final VoidCallback onLyricsTap;
   final VoidCallback onQueueTap;
+  final VoidCallback onRelatedTap;
   final bool isLyricsActive;
   final bool isQueueActive;
-  final Color accentColor;
+  final bool isRelatedActive;
 
   const NowPlayingBottomActions({
     super.key,
     required this.onLyricsTap,
     required this.onQueueTap,
+    required this.onRelatedTap,
     this.isLyricsActive = false,
     this.isQueueActive = false,
-    this.accentColor = Colors.white,
+    this.isRelatedActive = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 2.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          CastButton(
-            iconSize: 24,
-            iconColor: Colors.white.withValues(alpha: 0.5),
+          _Tab(
+            label: 'UP NEXT',
+            active: isQueueActive,
+            onTap: onQueueTap,
           ),
-          _ActionButton(
-            icon: Icons.chat_bubble_outline_rounded,
-            isActive: isLyricsActive,
-            activeColor: accentColor,
+          _Tab(
+            label: 'LYRICS',
+            active: isLyricsActive,
             onTap: onLyricsTap,
           ),
-          _ActionButton(
-            icon: Icons.queue_music_rounded,
-            isActive: isQueueActive,
-            activeColor: accentColor,
-            onTap: onQueueTap,
+          _Tab(
+            label: 'RELATED',
+            active: isRelatedActive,
+            onTap: onRelatedTap,
           ),
         ],
       ),
@@ -47,40 +48,41 @@ class NowPlayingBottomActions extends StatelessWidget {
   }
 }
 
-class _ActionButton extends StatelessWidget {
-  final IconData icon;
+class _Tab extends StatelessWidget {
+  final String label;
+  final bool active;
   final VoidCallback onTap;
-  final bool isActive;
-  final Color activeColor;
 
-  const _ActionButton({
-    required this.icon,
+  const _Tab({
+    required this.label,
+    required this.active,
     required this.onTap,
-    this.isActive = false,
-    this.activeColor = Colors.white,
   });
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      icon: Container(
-        padding: const EdgeInsets.all(8.0),
-        decoration: BoxDecoration(
-          color: isActive
-              ? activeColor.withValues(alpha: 0.2)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        child: Icon(
-          icon,
-          color: isActive ? activeColor : Colors.white.withValues(alpha: 0.5),
-          size: 24,
+    return Expanded(
+      child: InkResponse(
+        onTap: () {
+          HapticFeedback.selectionClick();
+          onTap();
+        },
+        radius: 32,
+        child: SizedBox(
+          height: 44,
+          child: Center(
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 1.1,
+                color: active ? Colors.white : Colors.white54,
+              ),
+            ),
+          ),
         ),
       ),
-      onPressed: () {
-        HapticFeedback.lightImpact();
-        onTap();
-      },
     );
   }
 }
