@@ -303,8 +303,8 @@ class _RequestsScreenState extends State<RequestsScreen> {
                   ),
                   const SizedBox(height: YtmSpacing.xs),
                   Text(
-                    'The API runs on your server and is reachable only on the '
-                    'LAN or through WireGuard. The token is in '
+                    'The API runs on your server and is reachable on your '
+                    'local network. The token is in '
                     '~/Pignify_server/.env (PIGNIFY_API_TOKEN).',
                     style: YtmText.listSubtitle.copyWith(
                       color: isDark

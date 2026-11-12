@@ -5,8 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Configuration for the self-hosted Pignify Requests API.
 ///
-/// The API is LAN/VPN only (port 8091), so the URL is typically something like
-/// `http://192.168.1.30:8091` or `http://10.224.29.1:8091`.
+/// The API is LAN only (port 8091), typically `http://192.168.1.30:8091`.
 class PignifyApiConfig {
   final String baseUrl;
   final String token;
@@ -396,12 +395,13 @@ class RequestsApiService {
     if (error.type == DioExceptionType.connectionTimeout ||
         error.type == DioExceptionType.receiveTimeout) {
       return const RequestsApiException(
-        'The server did not respond. Are you on the LAN or VPN?',
+        'The server did not respond. Are you on the same Wi-Fi network?',
       );
     }
     if (error.type == DioExceptionType.connectionError) {
       return const RequestsApiException(
-        'Cannot reach the Requests API. Check the URL and your LAN/VPN.',
+        'Cannot reach the Requests API. Check the URL and that you are on '
+        'the same Wi-Fi network.',
       );
     }
     if (status != null) {
