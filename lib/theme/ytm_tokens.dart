@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Design tokens for the YouTube-Music-inspired MyMusic UI.
+/// Design tokens for the YouTube-Music-inspired Pignify UI.
 ///
 /// New screens must use these tokens instead of hard-coded values. The old
 /// `AppTheme` constants stay in place until every screen has been migrated.

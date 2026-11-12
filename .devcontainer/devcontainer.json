@@ -1,5 +1,5 @@
 {
-  "name": "MyMusic (Flutter 3.47.7)",
+  "name": "Pignify (Flutter 3.47.7)",
   "build": {
     "dockerfile": "Dockerfile",
     "context": "."

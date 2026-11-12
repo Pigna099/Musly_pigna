@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'ytm_tokens.dart';
 
-/// Material theme built from the MyMusic design tokens.
+/// Material theme built from the Pignify design tokens.
 ///
 /// The accent is kept as `colorScheme.primary` so existing screens keep their
 /// current accent colour until they are migrated one by one. New components

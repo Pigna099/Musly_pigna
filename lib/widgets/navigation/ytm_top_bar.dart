@@ -3,7 +3,7 @@ import 'package:musly/theme/ytm_tokens.dart';
 
 /// YouTube-Music-style top bar.
 ///
-/// Home/Explore use the MyMusic wordmark; Library and detail pages use a title.
+/// Home/Explore use the Pignify wordmark; Library and detail pages use a title.
 /// Search and the profile avatar live on the right, as in YT Music.
 class YtmTopBar extends StatelessWidget implements PreferredSizeWidget {
   final String? title;
@@ -131,7 +131,7 @@ class _Wordmark extends StatelessWidget {
         ),
         const SizedBox(width: 8),
         Text(
-          'MyMusic',
+          'Pignify',
           style: TextStyle(
             color: color,
             fontSize: 20,

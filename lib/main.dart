@@ -256,7 +256,7 @@ class MuslyApp extends StatelessWidget {
             : themeService.accentColor.color;
 
         return MaterialApp(
-          title: 'MyMusic',
+          title: 'Pignify',
           debugShowCheckedModeBanner: false,
           theme: YtmTheme.light(accent: accent),
           darkTheme: YtmTheme.dark(accent: accent),
